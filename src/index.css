@@ -12,11 +12,15 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  overflow-x: clip;
+  overscroll-behavior: none;
 }
 
 a {
