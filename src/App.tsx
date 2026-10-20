@@ -5,7 +5,8 @@ import heroRescue from "./imports/IMG-20230128-WA0100.jpg";
 import donationImage from "./imports/IMG-20230712-WA0192.jpg";
 import volunteerImage from "./imports/IMG-20260206-WA0093.jpg";
 import logo from "./imports/sticker_logo.png";
-import pixQrCode from "./imports/pix-qrcode.png";
+import QRCode from "qrcode";
+import { pixKey, pixPayload } from "./pix";
 
 const VOLUNTEER_EMAIL = "gabrielcesmeraldo@gmail.com";
 
@@ -108,8 +109,14 @@ function HomePage() {
     setIsPixCopied(false);
   };
 
+  const [pixQrCode, setPixQrCode] = useState("");
+
+  useEffect(() => {
+    QRCode.toDataURL(pixPayload, { margin: 1, width: 448 }).then(setPixQrCode);
+  }, []);
+
   const copyPixKey = async () => {
-    await navigator.clipboard.writeText("adoteumbigodece@gmail.com");
+    await navigator.clipboard.writeText(pixPayload);
     setIsPixCopied(true);
   };
 
@@ -519,17 +526,17 @@ function HomePage() {
                     onClick={copyPixKey}
                     className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full bg-[#18314a] px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
                   >
-                    {isPixCopied ? "Chave copiada" : "Copiar chave Pix"}
+                    {isPixCopied ? "Código copiado" : "Copiar Pix copia e cola"}
                   </button>
                 </div>
                 <div className="w-fit rounded-xl border border-[#18314a]/15 bg-[#f7f5ef] p-2 text-center">
                   <img
                     src={pixQrCode}
-                    alt="QR Code com a chave Pix adoteumbigodece@gmail.com"
+                    alt={`QR Code Pix para a chave ${pixKey}`}
                     className="h-28 w-28"
                   />
                   <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em]">
-                    Escaneie a chave
+                    Escaneie no app do banco
                   </p>
                 </div>
               </div>
