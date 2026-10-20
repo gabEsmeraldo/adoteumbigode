@@ -204,7 +204,7 @@ function HomePage() {
             <img
               src={heroMain}
               alt="Voluntária do projeto com gatinhos acolhidos"
-              className="h-full w-full object-cover object-[50%_70%]"
+              className="h-full w-full object-cover object-[50%_30%] sm:object-[50%_48%]"
             />
             <figcaption className="photo-label">Acolhimento</figcaption>
           </figure>
@@ -212,7 +212,7 @@ function HomePage() {
             <img
               src={heroTeam}
               alt="Equipe de voluntárias em uma ação de adoção"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-[60%_45%]"
             />
             <figcaption className="photo-label">Nossa rede</figcaption>
           </figure>
@@ -220,7 +220,7 @@ function HomePage() {
             <img
               src={heroRescue}
               alt="Voluntárias durante o atendimento de um gatinho"
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-cover object-[35%_12%]"
             />
             <figcaption className="photo-label">Novos começos</figcaption>
           </figure>
