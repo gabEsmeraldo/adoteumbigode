@@ -160,10 +160,10 @@ function HomePage() {
 
         <nav
           aria-label="Navegação principal para celular"
-          className="page-shell flex gap-6 overflow-x-auto border-t border-[#18314a]/10 py-3 text-xs font-semibold lg:hidden"
+          className="page-shell flex flex-wrap gap-x-5 gap-y-2 border-t border-[#18314a]/10 py-3 text-xs font-semibold lg:hidden"
         >
           {navigation.map((item) => (
-            <a key={item.label} href={item.href} className="shrink-0">
+            <a key={item.label} href={item.href}>
               {item.label}
             </a>
           ))}
