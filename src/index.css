@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #18314a;
+  background: #f7f5ef;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page-shell {
+  width: min(100% - 2rem, 1240px);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: #1263a5;
+}
+
+.section-title {
+  font-size: clamp(2.3rem, 5vw, 4.5rem);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.body-copy {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgb(24 49 74 / 0.72);
+}
+
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1.5px solid #18314a;
+  border-radius: 999px;
+  padding-inline: 1.4rem;
+  font-size: 0.84rem;
+  font-weight: 750;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.button-primary {
+  background: #18314a;
+  color: white;
+}
+
+.button-primary:hover {
+  box-shadow: 3px 3px 0 #f0b43b;
+  transform: translate(-1px, -1px);
+}
+
+.button-secondary {
+  background: transparent;
+}
+
+.button-secondary:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.admin-field {
+  margin-top: 0.5rem;
+  min-height: 3rem;
+  width: 100%;
+  border: 1px solid rgb(24 49 74 / 0.25);
+  border-radius: 0.5rem;
+  background: #f7f5ef;
+  padding-inline: 1rem;
+  font-weight: 400;
+  outline: none;
+}
+
+.admin-field:focus {
+  border-color: #1263a5;
+}
+
+.photo-frame {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #18314a;
+  border-radius: 3px;
+  background: #d9d9d9;
+}
+
+.photo-label {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  border: 1px solid rgb(24 49 74 / 0.2);
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.92);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+
+@media (min-width: 640px) {
+  .page-shell {
+    width: min(100% - 3rem, 1240px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .button-primary,
+  .button-secondary {
+    transition: none;
+  }
+}
