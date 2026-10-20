@@ -379,7 +379,6 @@ function HomePage() {
           <img src={logo} alt="Adote um Bigode" className="h-16 w-auto self-start" />
           <div className="text-left text-xs leading-relaxed text-white/55 sm:text-right">
             <p>Resgate e adoção responsável de gatos.</p>
-            <p>Projeto de homepage — conteúdo ilustrativo.</p>
           </div>
         </div>
       </footer>
