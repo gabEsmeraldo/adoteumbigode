@@ -1,14 +1,20 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function allowed() {
+    function isAdmin() {
       return request.auth != null
         && request.auth.token.email_verified == true
         && request.auth.token.email in ['gabilesmeraldo@gmail.com'];
     }
 
-    match /listas/{id} {
-      allow read, write: if allowed();
+    // Monthly prestação de contas: public once published, editable by admins only.
+    match /reports/{month} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin()
+        && month.matches('^[0-9]{4}-[0-9]{2}$')
+        && request.resource.data.month == month
+        && request.resource.data.expenses is list
+        && request.resource.data.published is bool;
     }
   }
 }

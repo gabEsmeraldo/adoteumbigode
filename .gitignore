@@ -6,3 +6,4 @@ dist/
 .firebase/
 .DS_Store
 .wrangler/
+!.env.example

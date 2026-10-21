@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import heroMain from "./imports/IMG-20220711-WA0099.jpg";
 import heroTeam from "./imports/IMG-20190707-WA0083.jpg";
 import heroRescue from "./imports/IMG-20230128-WA0100.jpg";
@@ -7,6 +7,9 @@ import volunteerImage from "./imports/IMG-20260206-WA0093.jpg";
 import logo from "./imports/sticker_logo.png";
 import QRCode from "qrcode";
 import { pixKey, pixPayload } from "./pix";
+
+const AdminPage = lazy(() => import("./AdminPage"));
+const ReportsPage = lazy(() => import("./ReportsPage"));
 
 const VOLUNTEER_EMAIL = "gabrielcesmeraldo@gmail.com";
 
@@ -322,7 +325,7 @@ function HomePage() {
               pode acompanhar de perto o impacto que está construindo.
             </p>
             <a
-              href="#transparencia"
+              href="/prestacao-de-contas"
               className="mt-8 inline-flex border-b-2 border-[#f0b43b] pb-1 text-sm font-bold"
             >
               Ver relatórios e atualizações <span className="ml-2" aria-hidden="true">→</span>
@@ -627,4 +630,18 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default function App() {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  const Page = path.startsWith("/admin")
+    ? AdminPage
+    : path === "/prestacao-de-contas"
+      ? ReportsPage
+      : null;
+  if (!Page) return <HomePage />;
+
+  return (
+    <Suspense fallback={null}>
+      <Page />
+    </Suspense>
+  );
+}
