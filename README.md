@@ -32,13 +32,29 @@ cp .env.example .env   # preencha com os dados do app web no Firebase
 npm run dev            # abre em http://localhost:5173
 ```
 
-Os valores do `.env` ficam no Console do Firebase → Configurações do projeto → Seus apps → app Web. Só são necessários `apiKey`, `authDomain`, `projectId` e `appId`. O `.env` não vai para o GitHub.
+Os valores do `.env` ficam no Console do Firebase → Configurações do projeto → Seus apps → app Web. Só são necessários `apiKey`, `authDomain`, `projectId` e `appId`. O `.env` não vai para o GitHub; ele vale para `npm run dev`. Os builds de produção usam `.env.production`, que já está no repositório.
 
 Sem `.env`, o site funciona em **modo local**: o painel abre sem login e os relatórios ficam salvos só no navegador, útil para testar.
 
 ## Publicar uma nova versão
 
-Com o `.env` preenchido:
+### Automático (recomendado)
+
+O Cloudflare publica sozinho a cada `git push` na branch `main` do repositório `adoteumbigodeceara-web/landing-page`. A configuração do Firebase usada no build fica em `.env.production`, que está no repositório (ela é pública por natureza: vai junto no site, e quem protege os dados são as regras do Firestore).
+
+Configuração, feita uma vez no painel do Cloudflare:
+
+1. **Workers & Pages → adote-um-bigode → Settings → Build**.
+2. Em **Git repository**, clique em **Connect** e escolha `adoteumbigodeceara-web/landing-page`, branch `main` (é preciso autorizar o app do Cloudflare na conta do GitHub `adoteumbigodeceara-web`).
+3. **Build command:** `npm run build`
+4. **Deploy command:** `npx wrangler deploy`
+5. Não é preciso cadastrar variáveis de build.
+
+Para acompanhar ou ver erros, abra a aba **Deployments** do mesmo Worker. Se o Firebase mudar (outro projeto, por exemplo), atualize `.env.production` e faça push.
+
+### Manual
+
+Do próprio computador, sem esperar o push:
 
 ```bash
 npm run deploy
