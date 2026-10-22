@@ -156,7 +156,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="hidden overflow-hidden rounded-b-xl border-x border-b border-[#18314a]/15 bg-white md:block">
+            <div className="mt-5 hidden overflow-hidden rounded-xl border border-[#18314a]/15 bg-white md:block">
               <table className="w-full border-collapse text-left">
                 <thead className="bg-[#18314a] text-white">
                   <tr className="text-xs uppercase tracking-[0.1em]">

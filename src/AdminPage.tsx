@@ -823,6 +823,7 @@ function AdminDashboard({
             <label className="block text-sm font-bold">
               Data
               <input
+                id="expense-date"
                 type="date"
                 value={draft.date}
                 onChange={(event) => updateDraft("date", event.target.value)}
@@ -900,16 +901,27 @@ function AdminDashboard({
           <div className="flex flex-col gap-3 border-b-2 border-[#18314a] pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="eyebrow">Lançamentos do período</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-[-0.035em] capitalize">
+              <h2 className="mt-2 text-3xl font-bold tracking-[-0.035em]">
                 {monthLabel}
               </h2>
+              <p className="mt-2 text-sm text-[#18314a]/60">
+                {expenses.length === 1
+                  ? "1 despesa cadastrada"
+                  : `${expenses.length} despesas cadastradas`}
+              </p>
             </div>
-            <p className="text-sm text-[#18314a]/60">
-              {expenses.length} despesas cadastradas
-            </p>
+            <div className="sm:text-right">
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#18314a]/55">
+                Total utilizado
+              </p>
+              <p className="mt-1 text-3xl font-bold text-[#1263a5]">
+                {currency.format(spent)}
+              </p>
+            </div>
           </div>
 
-          <div className="hidden overflow-hidden rounded-b-xl border-x border-b border-[#18314a]/15 bg-white md:block">
+          {expenses.length > 0 && (
+          <div className="mt-5 hidden overflow-hidden rounded-xl border border-[#18314a]/15 bg-white md:block">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[880px] border-collapse text-left">
                 <thead className="bg-[#18314a] text-white">
@@ -960,6 +972,9 @@ function AdminDashboard({
             </div>
           </div>
 
+          )}
+
+          {expenses.length > 0 && (
           <div className="grid gap-4 pt-5 md:hidden">
             {expenses.map((expense) => (
               <article
@@ -997,20 +1012,28 @@ function AdminDashboard({
             ))}
           </div>
 
-          {expenses.length === 0 && (
-            <div className="rounded-b-xl border-x border-b border-[#18314a]/15 bg-white px-5 py-12 text-center text-sm text-[#18314a]/55">
-              Nenhuma despesa cadastrada neste relatório.
+          )}
+
+          {expenses.length === 0 && !isLoadingReport && (
+            <div className="mt-5 flex flex-col items-center rounded-xl border-2 border-dashed border-[#18314a]/20 bg-white/60 px-6 py-12 text-center">
+              <p className="font-bold">Nenhuma despesa neste mês ainda</p>
+              <p className="mt-1 max-w-sm text-sm leading-relaxed text-[#18314a]/55">
+                Importe uma fatura em PDF ou use o formulário acima para
+                adicionar o primeiro lançamento.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  const field = document.getElementById("expense-date");
+                  field?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  field?.focus({ preventScroll: true });
+                }}
+                className="mt-5 inline-flex min-h-10 items-center rounded-full bg-[#f5c65c] px-5 text-sm font-bold transition-transform hover:-translate-y-0.5"
+              >
+                Adicionar despesa <span className="ml-2" aria-hidden="true">＋</span>
+              </button>
             </div>
           )}
-        </section>
-
-        <section className="mt-8 rounded-xl border border-[#18314a]/15 bg-white p-5">
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#18314a]/50">
-            Total utilizado
-          </p>
-          <p className="mt-3 text-2xl font-bold text-[#1263a5]">
-            {currency.format(spent)}
-          </p>
         </section>
 
         <section className="mt-8 flex flex-col gap-5 rounded-2xl bg-[#18314a] p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
