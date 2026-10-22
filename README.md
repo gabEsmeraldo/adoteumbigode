@@ -10,7 +10,7 @@ Site do projeto Adote um Bigode, rede voluntária de resgate e adoção de gatos
 | Código | GitHub: [adoteumbigodeceara-web/landing-page](https://github.com/adoteumbigodeceara-web/landing-page) (branch `main`) |
 | Banco de dados e login | Firebase, projeto `adoteumbigode-ec504` (Firestore em `southamerica-east1` + login com Google), plano gratuito Spark |
 | E-mail administrador | `adoteumbigodeceara@gmail.com`: única conta que entra em `/admin` e pode editar a prestação de contas |
-| Inscrições de voluntários | Vão por e-mail para `gabrielcesmeraldo@gmail.com` (definido em `VOLUNTEER_EMAIL` em `src/App.tsx`) |
+| Inscrições de voluntários | Vão por e-mail para `adoteumbigodeceara@gmail.com` (definido em `VOLUNTEER_EMAIL` em `src/App.tsx`) |
 | Instagram | [@adoteumbigodeceara](https://instagram.com/adoteumbigodeceara) (o botão "Adotar" abre o direct) |
 | Pix | Chave `adoteumbigodece@gmail.com` (QR e copia e cola gerados em `src/pix.ts`) |
 

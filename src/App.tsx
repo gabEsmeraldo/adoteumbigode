@@ -11,7 +11,7 @@ import { pixKey, pixPayload } from "./pix";
 const AdminPage = lazy(() => import("./AdminPage"));
 const ReportsPage = lazy(() => import("./ReportsPage"));
 
-const VOLUNTEER_EMAIL = "gabrielcesmeraldo@gmail.com";
+const VOLUNTEER_EMAIL = "adoteumbigodeceara@gmail.com";
 
 function buildVolunteerMailto(name: string, whatsapp: string) {
   const digits = whatsapp.replace(/\D/g, "");
