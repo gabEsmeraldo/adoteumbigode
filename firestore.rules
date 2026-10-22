@@ -4,7 +4,7 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null
         && request.auth.token.email_verified == true
-        && request.auth.token.email in ['gabilesmeraldo@gmail.com'];
+        && request.auth.token.email in ['adoteumbigodeceara@gmail.com'];
     }
 
     // Monthly prestação de contas: public once published, editable by admins only.

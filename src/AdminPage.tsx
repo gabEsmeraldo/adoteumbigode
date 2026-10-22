@@ -1076,7 +1076,7 @@ function AdminDashboard({
   );
 }
 
-const ADMIN_EMAILS = ["gabilesmeraldo@gmail.com"];
+const ADMIN_EMAILS = ["adoteumbigodeceara@gmail.com"];
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
