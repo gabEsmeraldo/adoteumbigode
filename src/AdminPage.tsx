@@ -159,11 +159,20 @@ function parseInvoice(text: string, totalPages: number): ParsedInvoice {
   return { expenses, declaredTotal, dueDate, totalPages };
 }
 
-function Login({ error }: { error: string }) {
+function Login({
+  error,
+  onLocalLogin,
+}: {
+  error: string;
+  onLocalLogin: () => void;
+}) {
   const [loginError, setLoginError] = useState("");
 
   const login = async () => {
-    if (!auth) return;
+    if (!auth) {
+      onLocalLogin();
+      return;
+    }
     setLoginError("");
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
@@ -212,24 +221,23 @@ function Login({ error }: { error: string }) {
             Entre no painel
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[#18314a]/65">
-            Entre com a conta Google autorizada para editar a prestação de
-            contas.
+            {isFirebaseConfigured
+              ? "Entre com a conta Google autorizada para editar a prestação de contas."
+              : "Modo local: o Firebase ainda não foi configurado, então os relatórios ficam salvos apenas neste navegador."}
           </p>
 
           <button
             type="button"
             onClick={login}
-            disabled={!isFirebaseConfigured}
-            className="button-primary mt-8 w-full disabled:cursor-not-allowed disabled:opacity-40"
+            className="button-primary mt-8 w-full"
           >
-            Entrar com Google <span aria-hidden="true">→</span>
+            {isFirebaseConfigured ? "Entrar com Google" : "Entrar no modo local"}{" "}
+            <span aria-hidden="true">→</span>
           </button>
 
-          {(error || loginError || !isFirebaseConfigured) && (
+          {(error || loginError) && (
             <p role="alert" className="mt-4 text-sm font-bold text-[#9f2f2f]">
-              {!isFirebaseConfigured
-                ? "Firebase não configurado: preencha o arquivo .env."
-                : error || loginError}
+              {error || loginError}
             </p>
           )}
 
@@ -1049,6 +1057,7 @@ const ADMIN_EMAILS = ["gabilesmeraldo@gmail.com"];
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [isLocalSession, setIsLocalSession] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(isFirebaseConfigured);
 
   useEffect(() => {
@@ -1061,6 +1070,17 @@ export default function AdminPage() {
 
   if (isCheckingAuth) return null;
 
+  if (!isFirebaseConfigured) {
+    return isLocalSession ? (
+      <AdminDashboard
+        email="Modo local (sem Firebase)"
+        onLogout={() => setIsLocalSession(false)}
+      />
+    ) : (
+      <Login error="" onLocalLogin={() => setIsLocalSession(true)} />
+    );
+  }
+
   const isAdmin = Boolean(user?.email && ADMIN_EMAILS.includes(user.email));
   const logout = () => {
     if (auth) signOut(auth);
@@ -1070,6 +1090,7 @@ export default function AdminPage() {
     return (
       <Login
         error={user ? `A conta ${user.email} não tem acesso ao painel.` : ""}
+        onLocalLogin={() => {}}
       />
     );
   }

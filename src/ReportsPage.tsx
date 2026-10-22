@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import logo from "./imports/sticker_logo.png";
-import { isFirebaseConfigured } from "./firebase";
 import {
   currency,
   fetchPublishedReports,
@@ -18,11 +17,6 @@ export default function ReportsPage() {
   const [loadState, setLoadState] = useState<LoadState>("loading");
 
   useEffect(() => {
-    if (!isFirebaseConfigured) {
-      setLoadState("error");
-      return;
-    }
-
     fetchPublishedReports()
       .then((items) => {
         setReports(items);
