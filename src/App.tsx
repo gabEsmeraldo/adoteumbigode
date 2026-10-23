@@ -63,28 +63,6 @@ function HomePage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [isDonationOpen, setIsDonationOpen] = useState(false);
   const [isPixCopied, setIsPixCopied] = useState(false);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-
-  useEffect(() => {
-    let previousScrollY = window.scrollY;
-
-    const updateHeaderVisibility = () => {
-      const currentScrollY = window.scrollY;
-      const scrollDifference = currentScrollY - previousScrollY;
-
-      if (currentScrollY <= 16) {
-        setIsHeaderVisible(true);
-        previousScrollY = currentScrollY;
-      } else if (Math.abs(scrollDifference) >= 8) {
-        setIsHeaderVisible(scrollDifference < 0);
-        previousScrollY = currentScrollY;
-      }
-    };
-
-    window.addEventListener("scroll", updateHeaderVisibility, { passive: true });
-
-    return () => window.removeEventListener("scroll", updateHeaderVisibility);
-  }, []);
 
   useEffect(() => {
     if (!isVolunteerFormOpen && !isDonationOpen) return;
@@ -126,16 +104,14 @@ function HomePage() {
   return (
     <main id="home" className="min-h-screen overflow-x-clip bg-[#f7f5ef] text-[#18314a]">
       <header
-        className={`sticky top-0 z-40 border-b border-[#18314a]/15 bg-[#f7f5ef] transition-transform duration-300 motion-reduce:transition-none ${
-          isHeaderVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+        className="sticky top-0 z-40 border-b border-[#18314a]/15 bg-[#f7f5ef]/90 backdrop-blur-md"
       >
-        <div className="page-shell flex h-20 items-center justify-between gap-6 lg:h-24">
+        <div className="page-shell flex h-16 items-center justify-between gap-6 sm:h-20 lg:h-24">
           <a href="#home" aria-label="Adote um Bigode — início" className="shrink-0">
             <img
               src={logo}
               alt="Adote um Bigode"
-              className="h-12 w-auto object-contain lg:h-16"
+              className="h-10 w-auto object-contain lg:h-16"
             />
           </a>
 
@@ -156,7 +132,7 @@ function HomePage() {
             ))}
           </nav>
 
-          <a href="#voluntariado" className="button-primary !min-h-10 sm:!min-h-12">
+          <a href="#voluntariado" className="button-primary !min-h-10 hover:!shadow-[3px_3px_0_#f0b43b] sm:!min-h-12">
             Quero ajudar
           </a>
         </div>
@@ -192,7 +168,7 @@ function HomePage() {
           </div>
         </div>
 
-        <div className="relative grid h-[490px] grid-cols-12 grid-rows-2 gap-3 sm:h-[570px] sm:gap-4 lg:h-[610px]">
+        <div className="relative grid h-[380px] grid-cols-12 grid-rows-2 gap-3 sm:h-[570px] sm:gap-4 lg:h-[610px]">
           <figure className="photo-frame col-span-12 row-span-1 sm:col-span-8 sm:row-span-2">
             <img
               src={heroMain}
@@ -226,10 +202,10 @@ function HomePage() {
       </section>
 
       <section id="sobre" className="scroll-mt-24 border-y border-[#18314a]/15 bg-white">
-        <div className="page-shell grid gap-12 py-20 lg:grid-cols-[.72fr_1.28fr] lg:py-28">
+        <div className="page-shell grid gap-5 py-16 sm:gap-12 sm:py-20 lg:grid-cols-[.72fr_1.28fr] lg:py-28">
           <div>
             <p className="eyebrow">Sobre nós</p>
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-[#18314a]/60">
+            <p className="mt-5 hidden max-w-xs text-sm leading-relaxed text-[#18314a]/60">
               Uma organização independente formada por pessoas que acreditam
               que cuidado coletivo muda destinos.
             </p>
@@ -272,14 +248,16 @@ function HomePage() {
             {steps.map((step) => (
               <article
                 key={step.number}
-                className="border-b border-[#18314a]/20 py-8 last:border-0 md:border-b-0 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
+                className="border-b border-[#18314a]/20 py-6 last:border-0 md:py-8 md:border-b-0 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
               >
-                <span className="text-sm font-bold text-[#1263a5]">
-                  {step.number}
-                </span>
-                <h3 className="mt-12 text-2xl font-bold tracking-tight">
-                  {step.title}
-                </h3>
+                <div className="flex items-baseline gap-3 md:block">
+                  <span className="text-sm font-bold text-[#1263a5]">
+                    {step.number}
+                  </span>
+                  <h3 className="text-2xl font-bold tracking-tight md:mt-12">
+                    {step.title}
+                  </h3>
+                </div>
                 <p className="mt-3 max-w-xs text-[15px] leading-relaxed text-[#18314a]/70">
                   {step.description}
                 </p>
@@ -372,6 +350,14 @@ function HomePage() {
           <img src={logo} alt="Adote um Bigode" className="h-16 w-auto self-start" />
           <div className="text-left text-xs leading-relaxed text-white/55 sm:text-right">
             <p>Resgate e adoção responsável de gatos.</p>
+            <a
+              href="https://instagram.com/adoteumbigodeceara"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex min-h-11 items-center rounded-full border border-white/30 px-5 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#10263a]"
+            >
+              @adoteumbigodeceara no Instagram
+            </a>
           </div>
         </div>
       </footer>
