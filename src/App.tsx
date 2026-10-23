@@ -156,21 +156,11 @@ function HomePage() {
             ))}
           </nav>
 
-          <a href="#voluntariado" className="button-primary hidden sm:inline-flex">
+          <a href="#voluntariado" className="button-primary !min-h-10 sm:!min-h-12">
             Quero ajudar
           </a>
         </div>
 
-        <nav
-          aria-label="Navegação principal para celular"
-          className="page-shell flex flex-wrap gap-x-5 gap-y-2 border-t border-[#18314a]/10 py-3 text-xs font-semibold lg:hidden"
-        >
-          {navigation.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
       </header>
 
       <section className="page-shell pb-20 pt-10 lg:pb-28 lg:pt-16">
@@ -191,7 +181,7 @@ function HomePage() {
               Acolhemos, cuidamos e encontramos famílias para gatinhos que
               precisam de uma nova chance.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-7 grid gap-3 sm:flex sm:flex-wrap">
               <a href="#resgates" className="button-primary">
                 Conheça o projeto <span aria-hidden="true">→</span>
               </a>
@@ -347,7 +337,7 @@ function HomePage() {
               Seja lar temporário, participe das ações, ofereça transporte,
               divulgue ou contribua com os cuidados veterinários.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
               <button
                 type="button"
                 onClick={() => setIsVolunteerFormOpen(true)}
