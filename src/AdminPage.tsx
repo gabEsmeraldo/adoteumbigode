@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { extractText, getDocumentProxy } from "unpdf";
 import logo from "./imports/sticker_logo.png";
+import { parseInvoice, supportedBanks, type ParsedInvoice } from "./invoices";
 import { auth, isFirebaseConfigured } from "./firebase";
 import {
   currency,
@@ -30,22 +31,6 @@ type ExpenseDraft = Omit<Expense, "id" | "value"> & {
   value: string;
 };
 
-type ImportedExpense = {
-  date: string;
-  establishment: string;
-  installment: string;
-  category: string;
-  city: string;
-  value: number;
-};
-
-type ParsedInvoice = {
-  expenses: ImportedExpense[];
-  declaredTotal: number | null;
-  dueDate: string | null;
-  totalPages: number;
-};
-
 const currentMonth = () => new Date().toISOString().slice(0, 7);
 
 const newId = () => crypto.randomUUID();
@@ -58,106 +43,6 @@ const emptyExpense: ExpenseDraft = {
   details: "",
   value: "",
 };
-
-const transactionPattern =
-  /^(\d{2}\/\d{2})\s+(.+?)\s+(-?[\d.]+,\d{2})$/;
-const installmentPattern = /^(.*?)\s+(\d{2}\/\d{2})$/;
-
-function parseBRL(value: string) {
-  return Number(value.replace(/\./g, "").replace(",", "."));
-}
-
-function parseInvoice(text: string, totalPages: number): ParsedInvoice {
-  const expenses: ImportedExpense[] = [];
-  let declaredTotal: number | null = null;
-  let dueDate: string | null = null;
-  let isInExpenses = false;
-  let lastExpense: ImportedExpense | null = null;
-
-  for (const rawLine of text.split("\n")) {
-    const line = rawLine.trim();
-    if (!line) continue;
-
-    const dueDateMatch = line.match(
-      /^Vencimento:\s*(\d{2}\/\d{2}\/\d{4})/i,
-    );
-    if (dueDateMatch && !dueDate) dueDate = dueDateMatch[1];
-
-    if (/Lan[çc]amentos: compras e saques/i.test(line)) {
-      isInExpenses = true;
-      lastExpense = null;
-      continue;
-    }
-
-    if (
-      /^(Pagamentos efetuados|Compras parceladas - pr[óo]ximas faturas)/i.test(
-        line,
-      )
-    ) {
-      isInExpenses = false;
-      lastExpense = null;
-      continue;
-    }
-
-    if (/^DATA\s+(ESTABELECIMENTO\s+)?VALOR/i.test(line)) {
-      lastExpense = null;
-      continue;
-    }
-
-    const totalMatch = line.match(
-      /^Lan[çc]amentos no cart[ãa]o\s+([\d.]+,\d{2})$/i,
-    );
-    if (totalMatch) declaredTotal = parseBRL(totalMatch[1]);
-
-    if (
-      /^(Total|Lan[çc]amentos no cart|Pr[óo]xima fatura|Demais faturas)/i.test(
-        line,
-      )
-    ) {
-      isInExpenses = false;
-      lastExpense = null;
-      continue;
-    }
-
-    if (!isInExpenses) continue;
-
-    const transactionMatch = line.match(transactionPattern);
-    if (transactionMatch) {
-      let [, date, establishment, value] = transactionMatch;
-      let installment = "";
-      const installmentMatch = establishment.match(installmentPattern);
-
-      if (installmentMatch) {
-        establishment = installmentMatch[1];
-        installment = installmentMatch[2];
-      }
-
-      lastExpense = {
-        date,
-        establishment,
-        installment,
-        category: "",
-        city: "",
-        value: parseBRL(value),
-      };
-      expenses.push(lastExpense);
-      continue;
-    }
-
-    if (
-      lastExpense &&
-      !/\d/.test(line) &&
-      line.split(/\s+/).length <= 5
-    ) {
-      const [category, ...city] = line.split(/\s+/);
-      lastExpense.category = category;
-      lastExpense.city = city.join(" ");
-    }
-    lastExpense = null;
-  }
-
-  return { expenses, declaredTotal, dueDate, totalPages };
-}
 
 function Login({
   error,
@@ -383,14 +268,14 @@ function AdminDashboard({
 
       if (!result.expenses.length) {
         throw new Error(
-          "Nenhum lançamento foi encontrado. No momento, a leitura automática reconhece apenas faturas do Itaú.",
+          `Nenhum lançamento foi encontrado. A leitura automática reconhece faturas ${supportedBanks.join(", ")}.`,
         );
       }
 
       setParsedInvoice(result);
       setSelectedImported(result.expenses.map(() => true));
       setImportMessage(
-        `${result.expenses.length} lançamentos encontrados em ${totalPages} página(s).`,
+        `Fatura ${result.bank}: ${result.expenses.length} lançamentos encontrados em ${totalPages} página(s).`,
       );
 
       if (result.dueDate) {
@@ -626,7 +511,7 @@ function AdminDashboard({
                   : importedFile || "Selecione ou arraste a fatura em PDF"}
               </span>
               <span className="mt-1 text-xs text-[#18314a]/50">
-                Leitura automática de faturas Itaú em PDF
+                Itaú, Nubank, Banco do Brasil, Bradesco e Banco do Nordeste — o banco é detectado automaticamente
               </span>
             </button>
             <input
@@ -668,7 +553,7 @@ function AdminDashboard({
               </div>
               <div className="shrink-0 text-left sm:text-right">
                 <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#18314a]/45">
-                  Fatura
+                  Fatura {parsedInvoice.bank}
                 </p>
                 <p className="mt-1 text-sm font-bold">{importedFile}</p>
                 <p className="mt-1 text-xs text-[#18314a]/50">
