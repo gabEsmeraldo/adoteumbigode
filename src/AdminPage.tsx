@@ -542,7 +542,7 @@ function AdminDashboard({
         </section>
 
         {parsedInvoice && (
-          <section className="mt-8 overflow-hidden rounded-2xl border-2 border-[#18314a] bg-white shadow-[5px_5px_0_#f0b43b]">
+          <section className="mt-8 overflow-clip rounded-2xl border-2 border-[#18314a] bg-white shadow-[5px_5px_0_#f0b43b]">
             <div className="flex flex-col gap-4 border-b border-[#18314a]/15 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#1263a5]">
@@ -574,8 +574,8 @@ function AdminDashboard({
             </div>
 
             <div className="md:hidden">
-              <div className="flex items-center justify-between gap-3 bg-[#18314a] px-5 py-3 text-white">
-                <p className="text-xs font-bold uppercase tracking-[0.08em]">
+              <div className="sticky top-16 z-10 flex items-center justify-between gap-3 bg-[#18314a] px-5 py-3 text-white">
+                <p className="whitespace-nowrap text-xs font-bold uppercase tracking-[0.08em]">
                   {selectedImportedExpenses.length} de {parsedInvoice.expenses.length} ·{" "}
                   {currency.format(selectedImportedTotal)}
                 </p>
@@ -587,9 +587,9 @@ function AdminDashboard({
                       return current.map(() => !allSelected);
                     })
                   }
-                  className="min-h-9 rounded-full border border-white/40 px-3 text-xs font-bold"
+                  className="min-h-9 whitespace-nowrap rounded-full border border-white/40 px-3 text-xs font-bold"
                 >
-                  {selectedImported.every(Boolean) ? "Desmarcar todos" : "Marcar todos"}
+                  {selectedImported.every(Boolean) ? "Limpar" : "Marcar todos"}
                 </button>
               </div>
               <ul>
