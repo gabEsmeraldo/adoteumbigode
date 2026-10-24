@@ -400,13 +400,13 @@ function AdminDashboard({
   return (
     <main className="min-h-screen bg-[#f7f5ef] text-[#18314a]">
       <header className="sticky top-0 z-40 border-b border-[#18314a]/15 bg-[#f7f5ef]/95 backdrop-blur">
-        <div className="page-shell flex min-h-20 items-center justify-between gap-4 py-3 lg:min-h-24">
+        <div className="page-shell flex min-h-16 items-center justify-between gap-4 py-2 sm:min-h-20 sm:py-3 lg:min-h-24">
           <div className="flex items-center gap-4">
             <a href="/" aria-label="Adote um Bigode — início">
               <img
                 src={logo}
                 alt="Adote um Bigode"
-                className="h-12 w-auto object-contain lg:h-16"
+                className="h-10 w-auto object-contain sm:h-12 lg:h-16"
               />
             </a>
             <span className="hidden border-l border-[#18314a]/20 pl-4 text-xs font-bold uppercase tracking-[0.12em] text-[#18314a]/55 sm:block">
@@ -431,10 +431,10 @@ function AdminDashboard({
       </header>
 
       <section className="border-b border-[#18314a]/15 bg-[#e8f0f5]">
-        <div className="page-shell grid gap-8 py-10 lg:grid-cols-[1fr_auto] lg:items-end lg:py-14">
+        <div className="page-shell grid gap-5 py-7 sm:gap-8 sm:py-10 lg:grid-cols-[1fr_auto] lg:items-end lg:py-14">
           <div>
             <p className="eyebrow">Prestação de contas</p>
-            <h1 className="mt-3 text-4xl font-bold tracking-[-0.045em] sm:text-5xl">
+            <h1 className="mt-3 text-3xl font-bold tracking-[-0.045em] sm:text-4xl md:text-5xl">
               Relatório mensal
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#18314a]/65 sm:text-base">
@@ -448,7 +448,7 @@ function AdminDashboard({
         </div>
       </section>
 
-      <div className="page-shell py-8 sm:py-12">
+      <div className="page-shell pb-28 pt-6 sm:py-12">
         <section className="grid gap-5 lg:grid-cols-[.7fr_1.3fr]">
           <div className="rounded-2xl border border-[#18314a]/15 bg-white p-5 sm:p-6">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#1263a5]">
@@ -497,7 +497,7 @@ function AdminDashboard({
                 event.preventDefault();
                 handleFile(event.dataTransfer.files[0]);
               }}
-              className="mt-5 flex min-h-40 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#18314a]/25 bg-[#f7f5ef] p-6 text-center transition-colors hover:border-[#1263a5] hover:bg-[#e8f0f5] disabled:cursor-wait disabled:opacity-60"
+              className="mt-5 flex min-h-32 w-full sm:min-h-40 flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#18314a]/25 bg-[#f7f5ef] p-6 text-center transition-colors hover:border-[#1263a5] hover:bg-[#e8f0f5] disabled:cursor-wait disabled:opacity-60"
             >
               <span
                 aria-hidden="true"
@@ -508,7 +508,12 @@ function AdminDashboard({
               <span className="mt-4 font-bold">
                 {isReadingInvoice
                   ? "Lendo a fatura..."
-                  : importedFile || "Selecione ou arraste a fatura em PDF"}
+                  : importedFile || (
+                      <>
+                        <span className="sm:hidden">Toque para selecionar a fatura em PDF</span>
+                        <span className="hidden sm:inline">Selecione ou arraste a fatura em PDF</span>
+                      </>
+                    )}
               </span>
               <span className="mt-1 text-xs text-[#18314a]/50">
                 Itaú, Nubank, Banco do Brasil, Bradesco e Banco do Nordeste — o banco é detectado automaticamente
@@ -546,7 +551,10 @@ function AdminDashboard({
                 <h2 className="mt-2 text-2xl font-bold tracking-[-0.03em]">
                   Lançamentos encontrados
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-[#18314a]/55">
+                <p className="mt-2 text-sm leading-relaxed text-[#18314a]/55 md:hidden">
+                  Toque em um lançamento para marcar ou desmarcar.
+                </p>
+                <p className="mt-2 hidden text-sm leading-relaxed text-[#18314a]/55 md:block">
                   Clique ou arraste sobre as linhas para marcar e desmarcar.
                   Use Shift+clique para selecionar um intervalo.
                 </p>
@@ -565,7 +573,74 @@ function AdminDashboard({
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="md:hidden">
+              <div className="flex items-center justify-between gap-3 bg-[#18314a] px-5 py-3 text-white">
+                <p className="text-xs font-bold uppercase tracking-[0.08em]">
+                  {selectedImportedExpenses.length} de {parsedInvoice.expenses.length} ·{" "}
+                  {currency.format(selectedImportedTotal)}
+                </p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedImported((current) => {
+                      const allSelected = current.every(Boolean);
+                      return current.map(() => !allSelected);
+                    })
+                  }
+                  className="min-h-9 rounded-full border border-white/40 px-3 text-xs font-bold"
+                >
+                  {selectedImported.every(Boolean) ? "Desmarcar todos" : "Marcar todos"}
+                </button>
+              </div>
+              <ul>
+                {parsedInvoice.expenses.map((expense, index) => (
+                  <li key={`${expense.date}-${expense.establishment}-${index}`}>
+                    <button
+                      type="button"
+                      aria-pressed={selectedImported[index] ?? false}
+                      onClick={() =>
+                        setSelectedImported((current) =>
+                          current.map((selected, i) => (i === index ? !selected : selected)),
+                        )
+                      }
+                      className={`flex w-full items-center gap-4 border-b border-[#18314a]/10 px-5 py-4 text-left ${
+                        selectedImported[index]
+                          ? "bg-white"
+                          : "bg-[#f7f5ef] text-[#18314a]/35"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedImported[index] ?? false}
+                        readOnly
+                        tabIndex={-1}
+                        aria-hidden="true"
+                        className="pointer-events-none h-5 w-5 shrink-0 accent-[#1263a5]"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={`block truncate font-bold ${
+                            selectedImported[index] ? "" : "line-through"
+                          }`}
+                        >
+                          {expense.establishment}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-[#18314a]/50">
+                          {[expense.date, expense.installment, expense.category]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
+                      </span>
+                      <span className="shrink-0 font-bold">
+                        {currency.format(expense.value)}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[850px] border-collapse text-left">
                 <thead className="bg-[#18314a] text-white">
                   <tr className="text-xs uppercase tracking-[0.08em]">
@@ -677,7 +752,7 @@ function AdminDashboard({
                 type="button"
                 onClick={addImportedExpenses}
                 disabled={!selectedImportedExpenses.length}
-                className="button-primary shrink-0 disabled:cursor-not-allowed disabled:opacity-35"
+                className="button-primary w-full shrink-0 disabled:cursor-not-allowed sm:w-auto disabled:opacity-35"
               >
                 Adicionar selecionados ao relatório
               </button>
@@ -921,28 +996,28 @@ function AdminDashboard({
           )}
         </section>
 
-        <section className="mt-8 flex flex-col gap-5 rounded-2xl bg-[#18314a] p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <section className="fixed inset-x-0 bottom-0 z-30 flex flex-col gap-3 bg-[#18314a] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 text-white shadow-[0_-6px_20px_rgb(16_38_58/0.25)] sm:static sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:rounded-2xl sm:p-8 sm:shadow-none">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#f5c65c]">
               {published ? "Relatório publicado" : "Relatório em edição"}
               {isDirty ? " · alterações não salvas" : ""}
             </p>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/65">
+            <p className="mt-2 hidden max-w-xl text-sm leading-relaxed text-white/65 sm:block">
               Salve como rascunho para continuar depois, ou publique para exibir
               este mês na página de prestação de contas.
             </p>
             {savedMessage && (
-              <p role="status" className="mt-3 text-sm font-bold text-white">
+              <p role="status" className="mt-1 sm:mt-3 text-sm font-bold text-white">
                 {savedMessage}
               </p>
             )}
           </div>
-          <div className="flex shrink-0 flex-wrap gap-3">
+          <div className="grid shrink-0 grid-cols-2 gap-3 sm:flex sm:flex-wrap">
             <button
               type="button"
               onClick={() => persist(false)}
               disabled={isSaving || isLoadingReport}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/60 px-6 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#18314a] disabled:opacity-40"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/60 px-4 sm:px-6 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#18314a] disabled:opacity-40"
             >
               {published ? "Despublicar" : "Salvar rascunho"}
             </button>
@@ -950,7 +1025,7 @@ function AdminDashboard({
               type="button"
               onClick={() => persist(true)}
               disabled={isSaving || isLoadingReport || !expenses.length}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f5c65c] px-6 text-sm font-bold text-[#18314a] transition-transform hover:-translate-y-0.5 disabled:opacity-40"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f5c65c] px-4 text-sm font-bold text-[#18314a] transition-transform hover:-translate-y-0.5 disabled:opacity-40 sm:px-6"
             >
               {isSaving ? "Salvando..." : published ? "Salvar e publicar" : "Publicar"}
             </button>
