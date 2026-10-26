@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import heroMain from "./imports/IMG-20220711-WA0099.jpg";
+import heroMain from "./imports/volunteers-park.jpg";
 import heroTeam from "./imports/IMG-20190707-WA0083.jpg";
 import heroRescue from "./imports/IMG-20230128-WA0100.jpg";
 import donationImage from "./imports/IMG-20230712-WA0192.jpg";
