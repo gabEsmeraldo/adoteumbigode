@@ -5,11 +5,10 @@ import heroRescue from "./imports/IMG-20230128-WA0100.jpg";
 import donationImage from "./imports/IMG-20230712-WA0192.jpg";
 import volunteerImage from "./imports/IMG-20260206-WA0093.jpg";
 import logo from "./imports/sticker_logo.png";
-import QRCode from "qrcode";
-import { pixKey, pixPayload } from "./pix";
 
 const AdminPage = lazy(() => import("./AdminPage"));
 const ReportsPage = lazy(() => import("./ReportsPage"));
+const ApoiePage = lazy(() => import("./ApoiePage"));
 
 const VOLUNTEER_EMAIL = "adoteumbigodeceara@gmail.com";
 
@@ -35,6 +34,7 @@ const navigation = [
   { label: "Resgates", href: "#resgates" },
   { label: "Prestação de contas", href: "#transparencia" },
   { label: "Voluntariado", href: "#voluntariado" },
+  { label: "Apoie", href: "/apoie" },
 ];
 
 const steps = [
@@ -61,18 +61,14 @@ const steps = [
 function HomePage() {
   const [isVolunteerFormOpen, setIsVolunteerFormOpen] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
-  const [isDonationOpen, setIsDonationOpen] = useState(false);
-  const [isPixCopied, setIsPixCopied] = useState(false);
 
   useEffect(() => {
-    if (!isVolunteerFormOpen && !isDonationOpen) return;
+    if (!isVolunteerFormOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsVolunteerFormOpen(false);
-        setIsDonationOpen(false);
-        setIsPixCopied(false);
       }
     };
 
@@ -83,23 +79,7 @@ function HomePage() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [isVolunteerFormOpen, isDonationOpen]);
-
-  const closeDonation = () => {
-    setIsDonationOpen(false);
-    setIsPixCopied(false);
-  };
-
-  const [pixQrCode, setPixQrCode] = useState("");
-
-  useEffect(() => {
-    QRCode.toDataURL(pixPayload, { margin: 1, width: 448 }).then(setPixQrCode);
-  }, []);
-
-  const copyPixKey = async () => {
-    await navigator.clipboard.writeText(pixPayload);
-    setIsPixCopied(true);
-  };
+  }, [isVolunteerFormOpen]);
 
   return (
     <main id="home" className="min-h-screen overflow-x-clip bg-[#f7f5ef] text-[#18314a]">
@@ -326,13 +306,12 @@ function HomePage() {
                   →
                 </span>
               </button>
-              <button
-                type="button"
-                onClick={() => setIsDonationOpen(true)}
+              <a
+                href="/apoie"
                 className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/60 px-6 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#18314a]"
               >
                 Quero doar
-              </button>
+              </a>
             </div>
           </div>
           <div className="photo-frame aspect-[4/3] rotate-1 border-white/80">
@@ -452,156 +431,6 @@ function HomePage() {
         </div>
       )}
 
-      {isDonationOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#10263a]/80 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeDonation();
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="donation-title"
-            className="my-auto w-full max-w-2xl rounded-2xl border-2 border-[#18314a] bg-[#f7f5ef] p-6 text-[#18314a] shadow-[8px_8px_0_#f5c65c] sm:p-8"
-          >
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="eyebrow">Apoie o projeto</p>
-                <h2
-                  id="donation-title"
-                  className="mt-2 text-3xl font-bold tracking-[-0.035em] sm:text-4xl"
-                >
-                  Sua ajuda vira cuidado.
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={closeDonation}
-                className="rounded-full border border-[#18314a]/25 px-3 py-2 text-xs font-bold transition-colors hover:bg-white"
-                aria-label="Fechar opções de doação"
-              >
-                Fechar
-              </button>
-            </div>
-
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#18314a]/70">
-              Escolha a melhor forma de contribuir com alimentação,
-              atendimento veterinário e resgates.
-            </p>
-
-            <div className="mt-6 rounded-xl border-2 border-[#1263a5] bg-[#e8f0f5] p-5">
-              <div className="grid gap-5 sm:grid-cols-[1fr_132px] sm:items-center">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#1263a5]">
-                    Doação por Pix
-                  </p>
-                  <p className="mt-2 text-lg font-bold break-all">
-                    adoteumbigodece@gmail.com
-                  </p>
-                  <button
-                    type="button"
-                    onClick={copyPixKey}
-                    className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full bg-[#18314a] px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-                  >
-                    {isPixCopied ? "Código copiado" : "Copiar Pix copia e cola"}
-                  </button>
-                </div>
-                <div className="w-fit rounded-xl border border-[#18314a]/15 bg-[#f7f5ef] p-2 text-center">
-                  <img
-                    src={pixQrCode}
-                    alt={`QR Code Pix para a chave ${pixKey}`}
-                    className="h-28 w-28"
-                  />
-                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em]">
-                    Escaneie no app do banco
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <a
-                href="https://apoia.se/adoteumbigodece"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl border border-[#18314a]/20 bg-white p-5 transition-transform hover:-translate-y-0.5"
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#1263a5]">
-                  Apoia.se
-                </p>
-                <p className="mt-2 font-bold">Apoio recorrente</p>
-                <p className="mt-1 text-sm leading-relaxed text-[#18314a]/60">
-                  Contribua mensalmente com o valor que escolher.
-                </p>
-                <span className="mt-4 inline-block text-sm font-bold">
-                  Acessar Apoia.se →
-                </span>
-              </a>
-              <a
-                href="https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=2c9380849817d4a3019819c9df8f00b7"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl border border-[#18314a]/20 bg-white p-5 transition-transform hover:-translate-y-0.5"
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#1263a5]">
-                  Mercado Pago
-                </p>
-                <p className="mt-2 font-bold">Assinatura mensal</p>
-                <p className="mt-1 text-sm leading-relaxed text-[#18314a]/60">
-                  Cadastre uma contribuição recorrente com segurança.
-                </p>
-                <span className="mt-4 inline-block text-sm font-bold">
-                  Assinar agora →
-                </span>
-              </a>
-            </div>
-
-            <div className="mt-7 border-t border-[#18314a]/15 pt-6">
-              <p className="text-xs font-bold uppercase tracking-[0.14em]">
-                Use nossos links de afiliado
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-[#18314a]/60">
-                Suas compras também podem apoiar o projeto sem custo adicional.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <a
-                  href="https://minhaloja.cobasi.com.br/?utm_source=mais&utm_medium=maisplataforma&utm_campaign=adoteumbigode"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-[#18314a]/25 bg-white px-4 py-2 text-sm font-bold transition-colors hover:border-[#1263a5] hover:text-[#1263a5]"
-                >
-                  Cobasi
-                </a>
-                <a
-                  href="https://minhaloja.cobasi.com.br/paco#adoteumbigode"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-[#18314a]/25 bg-white px-4 py-2 text-sm font-bold transition-colors hover:border-[#1263a5] hover:text-[#1263a5]"
-                >
-                  Cobasi — Paço
-                </a>
-                <a
-                  href="https://amzn.to/3P63wHC"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-[#18314a]/25 bg-white px-4 py-2 text-sm font-bold transition-colors hover:border-[#1263a5] hover:text-[#1263a5]"
-                >
-                  Amazon
-                </a>
-                <a
-                  href="https://s.shopee.com.br/801ADDenon"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-[#18314a]/25 bg-white px-4 py-2 text-sm font-bold transition-colors hover:border-[#1263a5] hover:text-[#1263a5]"
-                >
-                  Shopee
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
@@ -612,7 +441,9 @@ export default function App() {
     ? AdminPage
     : path === "/prestacao-de-contas"
       ? ReportsPage
-      : null;
+      : path === "/apoie"
+        ? ApoiePage
+        : null;
   if (!Page) return <HomePage />;
 
   return (
