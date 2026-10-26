@@ -76,7 +76,7 @@ export default function ReportsPage() {
                 >
                   Período do relatório
                 </label>
-                <div className="mt-3 grid grid-cols-[auto_1fr_auto] gap-2">
+                <div className="mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2">
                   <button
                     type="button"
                     onClick={() => selectMonthAt(selectedIndex + 1)}
@@ -90,7 +90,7 @@ export default function ReportsPage() {
                     id="report-month"
                     value={selectedMonth}
                     onChange={(event) => setSelectedMonth(event.target.value)}
-                    className="min-h-12 w-full rounded-lg border border-[#18314a]/25 bg-white px-4 text-sm font-bold outline-none focus:border-[#1263a5]"
+                    className="min-h-12 w-full min-w-0 rounded-lg border border-[#18314a]/25 bg-white px-4 text-sm font-bold outline-none focus:border-[#1263a5]"
                   >
                     {reports.map((item) => (
                       <option key={item.month} value={item.month}>
