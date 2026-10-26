@@ -308,7 +308,7 @@ function HomePage() {
               </button>
               <a
                 href="/apoie"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/60 px-6 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#18314a]"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/60 px-6 text-sm font-bold text-white transition-colors hover:bg-white hover:!text-[#1263a5]"
               >
                 Quero doar
               </a>
