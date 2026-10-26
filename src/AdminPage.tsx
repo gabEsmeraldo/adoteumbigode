@@ -152,6 +152,7 @@ function AdminDashboard({
   const [month, setMonth] = useState(currentMonth);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [published, setPublished] = useState(false);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
   const [isLoadingReport, setIsLoadingReport] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -376,6 +377,12 @@ function AdminDashboard({
   const removeExpense = (id: string) => {
     setExpenses((current) => current.filter((item) => item.id !== id));
     setIsDirty(true);
+  };
+
+  const removeAllExpenses = () => {
+    setExpenses([]);
+    setIsDirty(true);
+    setIsClearConfirmOpen(false);
   };
 
   const persist = async (nextPublished: boolean) => {
@@ -877,6 +884,15 @@ function AdminDashboard({
               <p className="mt-1 text-3xl font-bold text-[#1263a5]">
                 {currency.format(spent)}
               </p>
+              {expenses.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsClearConfirmOpen(true)}
+                  className="mt-2 text-xs font-bold text-[#18314a]/55 underline decoration-[#f0b43b] decoration-2 underline-offset-4 hover:text-[#18314a]"
+                >
+                  Remover todos
+                </button>
+              )}
             </div>
           </div>
 
@@ -992,6 +1008,55 @@ function AdminDashboard({
               >
                 Adicionar despesa <span className="ml-2" aria-hidden="true">＋</span>
               </button>
+            </div>
+          )}
+
+          {isClearConfirmOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[#10263a]/75 p-4 backdrop-blur-sm"
+              onMouseDown={(event) => {
+                if (event.target === event.currentTarget) {
+                  setIsClearConfirmOpen(false);
+                }
+              }}
+            >
+              <div
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="clear-expenses-title"
+                className="w-full max-w-md rounded-2xl border-2 border-[#18314a] bg-[#f7f5ef] p-6 text-[#18314a] shadow-[8px_8px_0_#f5c65c] sm:p-8"
+              >
+                <p className="eyebrow">{monthLabel}</p>
+                <h2
+                  id="clear-expenses-title"
+                  className="mt-2 text-3xl font-bold tracking-[-0.035em]"
+                >
+                  Remover todos os lançamentos?
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-[#18314a]/70">
+                  {expenses.length === 1
+                    ? "A despesa cadastrada será removida"
+                    : `As ${expenses.length} despesas cadastradas serão removidas`}{" "}
+                  deste relatório. A mudança só vale depois que você salvar.
+                </p>
+                <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                  <button
+                    type="button"
+                    autoFocus
+                    onClick={() => setIsClearConfirmOpen(false)}
+                    className="min-h-11 rounded-full border border-[#18314a]/25 px-5 text-sm font-bold transition-colors hover:bg-white"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={removeAllExpenses}
+                    className="min-h-11 rounded-full bg-[#b3261e] px-5 text-sm font-bold text-white transition-colors hover:bg-[#8f1e18]"
+                  >
+                    Remover todos
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </section>
