@@ -39,7 +39,6 @@ const stores = [
   { name: "Shopee", href: "https://s.shopee.com.br/801ADDenon" },
   { name: "Amazon", href: "https://amzn.to/3P63wHC" },
   { name: "Cobasi", href: "https://minhaloja.cobasi.com.br/?utm_source=mais&utm_medium=maisplataforma&utm_campaign=adoteumbigode" },
-  { name: "Cobasi — Paço", href: "https://minhaloja.cobasi.com.br/paco#adoteumbigode" },
 ];
 
 const coupons = [
