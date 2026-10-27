@@ -10,7 +10,7 @@ const AdminPage = lazy(() => import("./AdminPage"));
 const ReportsPage = lazy(() => import("./ReportsPage"));
 const ApoiePage = lazy(() => import("./ApoiePage"));
 
-const VOLUNTEER_EMAIL = "adoteumbigode@gmail.com";
+const VOLUNTEER_EMAIL = "adoteumbigodece@gmail.com";
 
 function buildVolunteerMailto(name: string, whatsapp: string) {
   const digits = whatsapp.replace(/\D/g, "");
