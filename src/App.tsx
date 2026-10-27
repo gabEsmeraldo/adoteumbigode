@@ -10,13 +10,13 @@ const AdminPage = lazy(() => import("./AdminPage"));
 const ReportsPage = lazy(() => import("./ReportsPage"));
 const ApoiePage = lazy(() => import("./ApoiePage"));
 
-const VOLUNTEER_EMAIL = "adoteumbigodeceara@gmail.com";
+const VOLUNTEER_EMAIL = "adoteumbigode@gmail.com";
 
 function buildVolunteerMailto(name: string, whatsapp: string) {
   const digits = whatsapp.replace(/\D/g, "");
   const phone = digits.length <= 11 ? `55${digits}` : digits;
   const subject = "Voluntario adote um bigode";
-  const body = `Olá, me chamo ${name} e me cadastrei pelo site para ser voluntario do projeto.\n\nEntre em contato -> https://wa.me/${phone}`;
+  const body = `Olá, me chamo ${name} e tenho interesse em ser voluntario!\nMeu WhatsApp: https://wa.me/${phone}`;
   return `mailto:${VOLUNTEER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
