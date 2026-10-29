@@ -17,7 +17,11 @@ function buildVolunteerEmailUrl(name: string, whatsapp: string) {
   const phone = digits.length <= 11 ? `55${digits}` : digits;
   const subject = "Voluntario adote um bigode";
   const body = `Olá, me chamo ${name} e tenho interesse em ser voluntario!\nMeu WhatsApp: https://wa.me/${phone}`;
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${VOLUNTEER_EMAIL}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailto = `mailto:${VOLUNTEER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // Phones hand mailto to the mail app (Gmail); desktops open the regular
+  // Gmail inbox with the message drafted in a compose window.
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return mailto;
+  return `https://mail.google.com/mail/?extsrc=mailto&url=${encodeURIComponent(mailto)}`;
 }
 
 function formatPhone(value: string) {
@@ -407,14 +411,12 @@ function HomePage() {
               onSubmit={(event) => {
                 event.preventDefault();
                 const data = new FormData(event.currentTarget);
-                window.open(
-                  buildVolunteerEmailUrl(
-                    String(data.get("name")).trim(),
-                    String(data.get("whatsapp")),
-                  ),
-                  "_blank",
-                  "noopener",
+                const url = buildVolunteerEmailUrl(
+                  String(data.get("name")).trim(),
+                  String(data.get("whatsapp")),
                 );
+                if (url.startsWith("mailto:")) window.location.href = url;
+                else window.open(url, "_blank", "noopener");
                 setIsVolunteerFormOpen(false);
               }}
             >
