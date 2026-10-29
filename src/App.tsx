@@ -12,16 +12,23 @@ const ApoiePage = lazy(() => import("./ApoiePage"));
 
 const VOLUNTEER_EMAIL = "adoteumbigodece@gmail.com";
 
-function buildVolunteerEmailUrl(name: string, whatsapp: string) {
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// Phones always use mailto, which opens the mail app (Gmail on most phones).
+// Desktops default to Gmail on the web, with mailto as an extra button for
+// people who use a desktop mail app.
+function buildVolunteerEmailUrl(
+  name: string,
+  whatsapp: string,
+  useMailApp: boolean,
+) {
   const digits = whatsapp.replace(/\D/g, "");
   const phone = digits.length <= 11 ? `55${digits}` : digits;
   const subject = "Voluntario adote um bigode";
   const body = `Olá, me chamo ${name} e tenho interesse em ser voluntario!\nMeu WhatsApp: https://wa.me/${phone}`;
   const mailto = `mailto:${VOLUNTEER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  // Phones hand mailto to the mail app (Gmail); desktops open the regular
-  // Gmail inbox with the message drafted in a compose window.
-  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return mailto;
-  return `https://mail.google.com/mail/?extsrc=mailto&url=${encodeURIComponent(mailto)}`;
+  if (useMailApp) return mailto;
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${VOLUNTEER_EMAIL}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 function formatPhone(value: string) {
@@ -411,9 +418,12 @@ function HomePage() {
               onSubmit={(event) => {
                 event.preventDefault();
                 const data = new FormData(event.currentTarget);
+                const submitter = (event.nativeEvent as SubmitEvent)
+                  .submitter as HTMLButtonElement | null;
                 const url = buildVolunteerEmailUrl(
                   String(data.get("name")).trim(),
                   String(data.get("whatsapp")),
+                  IS_MOBILE || submitter?.value === "mail-app",
                 );
                 if (url.startsWith("mailto:")) window.location.href = url;
                 else window.open(url, "_blank", "noopener");
@@ -453,8 +463,17 @@ function HomePage() {
               </label>
 
               <button type="submit" className="button-primary w-full">
-                Enviar
+                {IS_MOBILE ? "Enviar" : "Enviar pelo Gmail"}
               </button>
+              {!IS_MOBILE && (
+                <button
+                  type="submit"
+                  value="mail-app"
+                  className="w-full text-sm font-bold text-[#1263a5] underline underline-offset-4 hover:text-[#18314a]"
+                >
+                  Usar meu app de e-mail
+                </button>
+              )}
             </form>
           </div>
         </div>
