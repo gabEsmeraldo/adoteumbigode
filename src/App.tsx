@@ -12,19 +12,20 @@ const ApoiePage = lazy(() => import("./ApoiePage"));
 
 const VOLUNTEER_EMAIL = "adoteumbigodece@gmail.com";
 
-function buildVolunteerMailto(name: string, whatsapp: string) {
+function buildVolunteerEmailUrl(name: string, whatsapp: string) {
   const digits = whatsapp.replace(/\D/g, "");
   const phone = digits.length <= 11 ? `55${digits}` : digits;
   const subject = "Voluntario adote um bigode";
   const body = `Olá, me chamo ${name} e tenho interesse em ser voluntario!\nMeu WhatsApp: https://wa.me/${phone}`;
-  return `mailto:${VOLUNTEER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${VOLUNTEER_EMAIL}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 function formatPhone(value: string) {
   const d = value.replace(/\D/g, "").slice(0, 11);
   if (d.length <= 2) return d.length ? `(${d}` : "";
   if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  if (d.length <= 10)
+    return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
@@ -82,12 +83,17 @@ function HomePage() {
   }, [isVolunteerFormOpen]);
 
   return (
-    <main id="home" className="min-h-screen overflow-x-clip bg-[#f7f5ef] text-[#18314a]">
-      <header
-        className="sticky top-0 z-40 border-b border-[#18314a]/15 bg-[#f7f5ef]/90 backdrop-blur-md"
-      >
+    <main
+      id="home"
+      className="min-h-screen overflow-x-clip bg-[#f7f5ef] text-[#18314a]"
+    >
+      <header className="sticky top-0 z-40 border-b border-[#18314a]/15 bg-[#f7f5ef]/90 backdrop-blur-md">
         <div className="page-shell flex h-16 items-center justify-between gap-6 sm:h-20 lg:h-24">
-          <a href="#home" aria-label="Adote um Bigode — início" className="shrink-0">
+          <a
+            href="#home"
+            aria-label="Adote um Bigode — início"
+            className="shrink-0"
+          >
             <img
               src={logo}
               alt="Adote um Bigode"
@@ -112,11 +118,13 @@ function HomePage() {
             ))}
           </nav>
 
-          <a href="#voluntariado" className="button-primary !min-h-10 hover:!shadow-[3px_3px_0_#f0b43b] sm:!min-h-12">
+          <a
+            href="#voluntariado"
+            className="button-primary !min-h-10 hover:!shadow-[3px_3px_0_#f0b43b] sm:!min-h-12"
+          >
             Quero ajudar
           </a>
         </div>
-
       </header>
 
       <section className="page-shell pb-20 pt-10 lg:pb-28 lg:pt-16">
@@ -181,13 +189,16 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="sobre" className="scroll-mt-24 border-y border-[#18314a]/15 bg-white">
+      <section
+        id="sobre"
+        className="scroll-mt-24 border-y border-[#18314a]/15 bg-white"
+      >
         <div className="page-shell grid gap-5 py-16 sm:gap-12 sm:py-20 lg:grid-cols-[.72fr_1.28fr] lg:py-28">
           <div>
             <p className="eyebrow">Sobre nós</p>
             <p className="mt-5 hidden max-w-xs text-sm leading-relaxed text-[#18314a]/60">
-              Uma organização independente formada por pessoas que acreditam
-              que cuidado coletivo muda destinos.
+              Uma organização independente formada por pessoas que acreditam que
+              cuidado coletivo muda destinos.
             </p>
           </div>
           <div>
@@ -276,13 +287,19 @@ function HomePage() {
               href="/prestacao-de-contas"
               className="mt-8 inline-flex border-b-2 border-[#f0b43b] pb-1 text-sm font-bold"
             >
-              Ver relatórios e atualizações <span className="ml-2" aria-hidden="true">→</span>
+              Ver relatórios e atualizações{" "}
+              <span className="ml-2" aria-hidden="true">
+                →
+              </span>
             </a>
           </div>
         </div>
       </section>
 
-      <section id="voluntariado" className="scroll-mt-24 bg-[#1263a5] text-white">
+      <section
+        id="voluntariado"
+        className="scroll-mt-24 bg-[#1263a5] text-white"
+      >
         <div className="page-shell grid gap-10 py-16 lg:grid-cols-[1fr_.7fr] lg:items-center lg:py-20">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#f5c65c]">
@@ -326,7 +343,11 @@ function HomePage() {
 
       <footer className="bg-[#10263a] text-white">
         <div className="page-shell flex flex-col gap-7 py-10 sm:flex-row sm:items-end sm:justify-between">
-          <img src={logo} alt="Adote um Bigode" className="h-16 w-auto self-start" />
+          <img
+            src={logo}
+            alt="Adote um Bigode"
+            className="h-16 w-auto self-start"
+          />
           <div className="text-left text-xs leading-relaxed text-white/55 sm:text-right">
             <p>Resgate e adoção responsável de gatos.</p>
             <a
@@ -386,9 +407,13 @@ function HomePage() {
               onSubmit={(event) => {
                 event.preventDefault();
                 const data = new FormData(event.currentTarget);
-                window.location.href = buildVolunteerMailto(
-                  String(data.get("name")).trim(),
-                  String(data.get("whatsapp")),
+                window.open(
+                  buildVolunteerEmailUrl(
+                    String(data.get("name")).trim(),
+                    String(data.get("whatsapp")),
+                  ),
+                  "_blank",
+                  "noopener",
                 );
                 setIsVolunteerFormOpen(false);
               }}
@@ -415,7 +440,9 @@ function HomePage() {
                   inputMode="tel"
                   required
                   value={whatsapp}
-                  onChange={(event) => setWhatsapp(formatPhone(event.target.value))}
+                  onChange={(event) =>
+                    setWhatsapp(formatPhone(event.target.value))
+                  }
                   pattern="\(\d{2}\) \d{4,5}-\d{4}"
                   title="Informe o DDD e o número, ex.: (85) 99999-1234"
                   placeholder="(00) 00000-0000"
@@ -430,7 +457,6 @@ function HomePage() {
           </div>
         </div>
       )}
-
     </main>
   );
 }
