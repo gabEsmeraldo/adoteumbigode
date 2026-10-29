@@ -7,10 +7,11 @@ Site do projeto Adote um Bigode, rede voluntária de resgate e adoção de gatos
 | O quê | Onde |
 |---|---|
 | Site no ar | https://adote-um-bigode.adote-um-bigode.workers.dev (Cloudflare Workers, nome `adote-um-bigode`) |
-| Código | GitHub: [adoteumbigodeceara-web/landing-page](https://github.com/adoteumbigodeceara-web/landing-page) (branch `main`) |
+| Código | GitHub: [adoteumbigodeceara-web/landing-page](https://github.com/adoteumbigodeceara-web/landing-page) (branch `main`), o repositório oficial, que publica o site no ar |
+| Ambiente de teste | Cópia em [gabEsmeraldo/adoteumbigode](https://github.com/gabEsmeraldo/adoteumbigode), publicada na Vercel (configurada em `vercel.json`). Opcional: serve para testar antes de publicar |
 | Banco de dados e login | Firebase, projeto `adoteumbigode-ec504` (Firestore em `southamerica-east1` + login com Google), plano gratuito Spark |
 | E-mail administrador | `adoteumbigodeceara@gmail.com`: única conta que entra em `/admin` e pode editar a prestação de contas |
-| Inscrições de voluntários | Vão por e-mail para `adoteumbigodeceara@gmail.com` (definido em `VOLUNTEER_EMAIL` em `src/App.tsx`) |
+| Inscrições de voluntários | O formulário abre o Gmail (na web, em nova aba) com uma mensagem pronta para `adoteumbigodece@gmail.com`, contendo o nome e o link de WhatsApp da pessoa. Não há servidor: quem envia é o próprio voluntário. Endereço definido em `VOLUNTEER_EMAIL` em `src/App.tsx` |
 | Instagram | [@adoteumbigodeceara](https://instagram.com/adoteumbigodeceara) (o botão "Adotar" abre o direct) |
 | Pix | Chave `adoteumbigodece@gmail.com` (QR e copia e cola gerados em `src/pix.ts`) |
 
@@ -20,7 +21,34 @@ Tudo roda em planos gratuitos, sem custo mensal.
 
 - `/`: página inicial: como ajudar (doar, ser voluntário, adotar), quem somos, fotos, doação por Pix e links de apoio, e o formulário de voluntário.
 - `/prestacao-de-contas`: despesas de cada mês publicado, lidas do Firestore.
-- `/admin`: painel para lançar despesas (à mão ou importando fatura PDF do Itaú), salvar rascunho e publicar o mês. Só a conta administradora entra.
+- `/apoie`: página de apoio, com doação por Pix (QR code e copia e cola).
+- `/admin`: painel para lançar despesas (à mão ou importando fatura de cartão em PDF: Nubank, Banco do Brasil, Banco do Nordeste, Bradesco e Itaú), salvar rascunho e publicar o mês. Só a conta administradora entra.
+
+As rotas são escolhidas em `App()` no fim de `src/App.tsx` (não há biblioteca de rotas). Para criar uma página nova, adicione o componente ali.
+
+## Mapa do código
+
+| Arquivo | O que tem |
+|---|---|
+| `src/App.tsx` | Página inicial inteira (textos, fotos, seções, formulário de voluntário) e as rotas |
+| `src/ApoiePage.tsx` | Página `/apoie` |
+| `src/ReportsPage.tsx` | Página pública de prestação de contas |
+| `src/AdminPage.tsx` | Painel `/admin` e lista `ADMIN_EMAILS` |
+| `src/reports.ts` | Leitura e gravação dos relatórios (Firestore, ou navegador no modo local) |
+| `src/invoices.ts` | Leitura das faturas em PDF, um *parser* por banco |
+| `src/pix.ts` | Chave Pix, nome e cidade do recebedor e geração do código Pix |
+| `src/firebase.ts` | Conexão com o Firebase a partir das variáveis `VITE_FIREBASE_*` |
+| `src/imports/` | Fotos e logo usados no site |
+| `src/index.css` | Estilos globais e classes reutilizadas (`button-primary`, `page-shell`, `eyebrow`…) |
+
+### Alterações comuns
+
+- **Textos e seções da página inicial:** edite direto em `src/App.tsx`; os textos estão no próprio JSX.
+- **Trocar uma foto:** coloque o arquivo novo em `src/imports/` e mude o `import` correspondente no topo do arquivo da página. Prefira JPG com até ~1600 px de largura para o site não ficar pesado.
+- **Mudar a chave Pix:** altere `PIX_KEY` (e, se for o caso, `MERCHANT_NAME`/`MERCHANT_CITY`) em `src/pix.ts`. Teste o QR com um app de banco antes de publicar.
+- **Mudar o e-mail que recebe voluntários:** `VOLUNTEER_EMAIL` em `src/App.tsx`.
+- **Mudar o Instagram:** procure `instagram.com/adoteumbigodeceara` em `src/App.tsx`.
+- **Fatura de um banco novo ou que mudou de formato:** em `src/invoices.ts`, escreva uma função `parseNomeDoBanco` seguindo as existentes e adicione-a na lista `parsers` (com uma expressão `detect` que reconheça o PDF). Se um banco mudar o layout da fatura, é a função dele que precisa de ajuste. Sempre dá para lançar as despesas à mão.
 
 ## Rodar no computador
 
@@ -37,6 +65,18 @@ Os valores do `.env` ficam no Console do Firebase → Configurações do projeto
 Sem `.env`, o site funciona em **modo local**: o painel abre sem login e os relatórios ficam salvos só no navegador, útil para testar.
 
 ## Publicar uma nova versão
+
+Antes de publicar, rode `npm run build` para conferir se não há erro de TypeScript ou de build.
+
+Se você tem acesso aos dois repositórios, o fluxo usado até aqui é: enviar primeiro para o de teste (Vercel), conferir o site de teste e só então enviar para o oficial:
+
+```bash
+git remote add landing https://github.com/adoteumbigodeceara-web/landing-page.git  # só na primeira vez
+git push origin main    # teste (Vercel)
+git push landing main   # produção (Cloudflare)
+```
+
+Não é preciso fazer mais nada depois do push: a Vercel e o Cloudflare fazem o build e publicam sozinhos, em um ou dois minutos. Os detalhes de cada um estão abaixo.
 
 ### Automático (recomendado)
 
